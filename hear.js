@@ -4,13 +4,22 @@
   const statusDot = document.getElementById('statusDot');
   const statusText = document.getElementById('statusText');
   const unsupportedNotice = document.getElementById('unsupportedNotice');
+  const T = window.HearI18n.t;
 
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   let recognition = null;
   let listening = false;
   let finalTranscript = '';
-  let lang = 'en-US';
+  // Defaults to match the site's UI language (see i18n.js); picking a
+  // language from the toggle below overrides that default from then on.
+  let lang = window.HearI18n.getSpeechLang();
   let captionDelay = 0; // ms, controlled by caption speed setting
+
+  function syncLangToggle() {
+    const group = document.getElementById('langGroup');
+    const v = lang === 'ko-KR' ? 'ko' : 'en';
+    group.querySelectorAll('.toggle-btn').forEach((b) => b.classList.toggle('active', b.dataset.v === v));
+  }
 
   if (!SpeechRecognition) {
     unsupportedNotice.style.display = 'block';
@@ -19,11 +28,11 @@
 
   function setStatus(isLive) {
     statusDot.classList.toggle('live', isLive);
-    statusText.textContent = isLive ? 'Listening' : 'Not listening';
+    statusText.textContent = isLive ? T('hear.statusLive') : T('hear.statusOff');
   }
 
   function renderCaption(text) {
-    captionBox.textContent = text || 'Press "Start Listening" and begin speaking.';
+    captionBox.textContent = text || T('hear.captionPlaceholder');
   }
 
   function initRecognition() {
@@ -50,7 +59,7 @@
 
     recognition.onerror = (e) => {
       if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
-        renderCaption('Microphone access was denied. Please allow microphone access to use Live Hear.');
+        renderCaption(T('hear.deniedMic'));
         stopListening();
       }
     };
@@ -72,15 +81,15 @@
       recognition.start();
       listening = true;
       setStatus(true);
-      startBtn.textContent = '⏹ Stop Listening';
-      renderCaption('Listening…');
+      startBtn.textContent = T('hear.stopBtn');
+      renderCaption(T('hear.listening'));
     } catch (e) {}
   }
 
   function stopListening() {
     listening = false;
     setStatus(false);
-    startBtn.textContent = '🎙 Start Listening';
+    startBtn.textContent = T('hear.startBtn');
     if (recognition) {
       try { recognition.stop(); } catch (e) {}
     }
@@ -115,10 +124,29 @@
   bindToggleGroup('langGroup', (v) => {
     lang = v === 'ko' ? 'ko-KR' : 'en-US';
     if (recognition) recognition.lang = lang;
+    window.HearI18n.setSpeechLang(lang); // explicit choice — overrides the UI-language default from here on
   });
+  syncLangToggle();
 
   bindToggleGroup('speedGroup', (v) => {
     captionDelay = v === 'slow' ? 500 : v === 'fast' ? 0 : 150;
+  });
+
+  // If the UI language changes while idle, refresh status/placeholder/
+  // button text to match — but never touch an active caption transcript,
+  // since that reflects speech, not the interface language.
+  document.addEventListener('hear:langchange', () => {
+    setStatus(listening);
+    startBtn.textContent = listening ? T('hear.stopBtn') : T('hear.startBtn');
+    if (!listening && !finalTranscript) renderCaption('');
+    // Only follow the UI language's speech-language default if the
+    // person hasn't explicitly picked one on this page before — an
+    // explicit choice should stick even after switching UI language.
+    if (!window.HearI18n.isSpeechLangOverridden()) {
+      lang = window.HearI18n.getSpeechLang();
+      if (recognition) recognition.lang = lang;
+      syncLangToggle();
+    }
   });
 
   renderCaption('');
