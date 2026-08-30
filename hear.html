@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Hear — HEAR</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="wrap site-header">
+  <a href="index.html" class="logo"><span class="dot"></span> HEAR</a>
+  <nav class="nav">
+    <a href="screening.html">Check My Experience</a>
+    <a href="hear.html" class="active">Live Hear</a>
+    <a href="accessibility.html">Accessibility Guide</a>
+    <a href="experience.html">Experience</a>
+    <a href="insights.html">Insights</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main class="wrap" style="padding: 30px 28px 100px; max-width: 780px;">
+  <div class="kicker">Live captions</div>
+  <h1 style="font-size:36px;">Live Hear</h1>
+  <p style="font-size:16.5px; max-width:520px;">Turn speech into accessible text, in real time, right in your browser.</p>
+
+  <div id="unsupportedNotice" class="notice" style="display:none;">
+    <strong>Live captions aren't supported in this browser.</strong> Try Chrome or Edge on desktop or Android for the best experience.
+  </div>
+
+  <div class="caption-box" id="captionBox">Press "Start Listening" and begin speaking.</div>
+
+  <div class="hear-controls">
+    <button class="btn-primary" id="startBtn">🎙 Start Listening</button>
+    <span class="status-dot" id="statusDot"><span class="dot"></span> <span id="statusText">Not listening</span></span>
+  </div>
+
+  <div class="notice">
+    Live Hear uses your device's microphone and browser speech recognition. Audio is processed by your browser and is not stored by HEAR.
+  </div>
+
+  <div class="settings-row">
+    <div class="setting-group">
+      <div class="label">Text size</div>
+      <div class="toggle-row" id="sizeGroup">
+        <button class="toggle-btn" data-v="small">Small</button>
+        <button class="toggle-btn active" data-v="medium">Medium</button>
+        <button class="toggle-btn" data-v="large">Large</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <div class="label">Contrast</div>
+      <div class="toggle-row" id="contrastGroup">
+        <button class="toggle-btn active" data-v="normal">Normal</button>
+        <button class="toggle-btn" data-v="high">High</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <div class="label">Language</div>
+      <div class="toggle-row" id="langGroup">
+        <button class="toggle-btn active" data-v="en">English</button>
+        <button class="toggle-btn" data-v="ko">Korean</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <div class="label">Caption speed</div>
+      <div class="toggle-row" id="speedGroup">
+        <button class="toggle-btn" data-v="slow">Slow</button>
+        <button class="toggle-btn active" data-v="normal">Normal</button>
+        <button class="toggle-btn" data-v="fast">Fast</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="wrap site-footer">
+  <span>HEAR — a web-based accessibility platform for everyday communication.</span>
+  <span>Not a medical device. Does not diagnose hearing loss.</span>
+</footer>
+
+<script src="js/hear.js"></script>
+</body>
+</html>

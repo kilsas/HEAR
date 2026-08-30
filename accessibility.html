@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Make It Accessible — HEAR</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="wrap site-header">
+  <a href="index.html" class="logo"><span class="dot"></span> HEAR</a>
+  <nav class="nav">
+    <a href="screening.html">Check My Experience</a>
+    <a href="hear.html">Live Hear</a>
+    <a href="accessibility.html" class="active">Accessibility Guide</a>
+    <a href="experience.html">Experience</a>
+    <a href="insights.html">Insights</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main class="wrap" style="padding: 30px 28px 100px;">
+  <div class="kicker">For the people around you</div>
+  <h1 style="font-size:38px; max-width:640px;">Make communication more accessible.</h1>
+  <p style="font-size:16.5px; max-width:520px; margin-bottom:36px;">Small changes can make conversations easier for everyone.</p>
+
+  <div class="audience-tabs" id="tabs">
+    <button class="audience-tab active" data-panel="teachers">👩‍🏫 For Teachers</button>
+    <button class="audience-tab" data-panel="families">👨‍👩‍👧 For Families</button>
+    <button class="audience-tab" data-panel="friends">🧑 For Friends &amp; Classmates</button>
+  </div>
+
+  <div class="guide-panel active" id="panel-teachers">
+    <div class="grid-2">
+      <div class="card">
+        <div class="guide-group">
+          <h3>Before speaking</h3>
+          <ul class="checklist">
+            <li>Get the student's attention first</li>
+            <li>Face the student directly</li>
+            <li>Make important information available visually</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="guide-group">
+          <h3>During class</h3>
+          <ul class="checklist">
+            <li>Avoid speaking while facing away from the class</li>
+            <li>Reduce unnecessary background noise</li>
+            <li>Repeat or rephrase important information when needed</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card" style="grid-column: 1 / -1;">
+        <div class="guide-group" style="margin-bottom:0;">
+          <h3>Group discussion</h3>
+          <ul class="checklist">
+            <li>Encourage one person to speak at a time</li>
+            <li>Identify who is speaking before they begin</li>
+            <li>Provide written instructions alongside verbal ones</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-panel" id="panel-families">
+    <div class="grid-2">
+      <div class="card">
+        <div class="guide-group">
+          <h3>At home</h3>
+          <ul class="checklist">
+            <li>Get their attention before starting a conversation</li>
+            <li>Keep the TV or music down during conversations</li>
+            <li>Face them when speaking, especially across a room</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="guide-group">
+          <h3>Family gatherings</h3>
+          <ul class="checklist">
+            <li>Choose quieter seating away from kitchens or speakers</li>
+            <li>Let one person speak at a time when possible</li>
+            <li>Check in privately if something was missed, without singling them out</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-panel" id="panel-friends">
+    <div class="grid-2">
+      <div class="card">
+        <div class="guide-group">
+          <h3>In conversation</h3>
+          <ul class="checklist">
+            <li>Face them when you talk, even in passing</li>
+            <li>Rephrase instead of just repeating louder</li>
+            <li>Suggest quieter spots for important conversations</li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="guide-group">
+          <h3>In groups</h3>
+          <ul class="checklist">
+            <li>Avoid talking over each other</li>
+            <li>Recap key points if the topic changes quickly</li>
+            <li>Ask what helps rather than assuming</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="statement" style="margin-top:36px;">
+    <p>Don't just ask, "How well can you hear?" Ask, "How well can the world communicate with you?"</p>
+  </div>
+</main>
+
+<footer class="wrap site-footer">
+  <span>HEAR — a web-based accessibility platform for everyday communication.</span>
+  <span>Not a medical device. Does not diagnose hearing loss.</span>
+</footer>
+
+<script>
+document.getElementById('tabs').addEventListener('click', (e) => {
+  const tab = e.target.closest('.audience-tab');
+  if (!tab) return;
+  document.querySelectorAll('.audience-tab').forEach((t) => t.classList.remove('active'));
+  document.querySelectorAll('.guide-panel').forEach((p) => p.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+});
+</script>
+</body>
+</html>

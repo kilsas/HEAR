@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Experience — HEAR</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="wrap site-header">
+  <a href="index.html" class="logo"><span class="dot"></span> HEAR</a>
+  <nav class="nav">
+    <a href="screening.html">Check My Experience</a>
+    <a href="hear.html">Live Hear</a>
+    <a href="accessibility.html">Accessibility Guide</a>
+    <a href="experience.html" class="active">Experience</a>
+    <a href="insights.html">Insights</a>
+    <a href="about.html">About</a>
+  </nav>
+</header>
+
+<main class="wrap" style="padding: 30px 28px 100px;">
+  <div class="kicker">Try it yourself</div>
+  <h1 style="font-size:38px; max-width:640px;">Experience a challenging listening environment.</h1>
+  <div class="notice">
+    <strong>This is an educational simulation.</strong> It does not reproduce every person's experience of hearing loss, and different people experience hearing loss differently.
+  </div>
+
+  <div class="grid-3" id="scenarioGrid" style="margin-top:32px;">
+    <div class="card scenario-card" data-scenario="classroom" style="cursor:pointer;">
+      <span class="icon">🏫</span>
+      <h3>Classroom</h3>
+      <p>Hear a lesson the way it might sound with reduced clarity and classroom chatter.</p>
+    </div>
+    <div class="card scenario-card" data-scenario="restaurant" style="cursor:pointer;">
+      <span class="icon">🍽</span>
+      <h3>Restaurant</h3>
+      <p>Try following a conversation over clattering dishes and nearby tables.</p>
+    </div>
+    <div class="card scenario-card" data-scenario="group" style="cursor:pointer;">
+      <span class="icon">👥</span>
+      <h3>Group conversation</h3>
+      <p>Multiple voices overlap as a group conversation moves quickly.</p>
+    </div>
+  </div>
+
+  <div id="simPanel" class="stage" style="display:none; margin-top:40px;">
+    <div class="stage-label" id="simLabel"></div>
+    <h2 id="simTitle"></h2>
+    <p class="instructions" id="simInstructions"></p>
+    <button class="speaker-btn" id="simPlay">🔊</button>
+    <div id="simQuestion" style="display:none;">
+      <p style="font-weight:600; color:var(--text);">How much information could you follow?</p>
+      <div class="choice-row">
+        <button class="choice-btn" data-v="most">Most of it</button>
+        <button class="choice-btn" data-v="some">Some of it</button>
+        <button class="choice-btn" data-v="little">Very little</button>
+      </div>
+    </div>
+    <div id="simResult" style="display:none; margin-top:24px;">
+      <p style="color:var(--text);">Thanks for trying the simulation. This is closer to what many people with hearing loss experience in noisy, fast-moving conversations — every day.</p>
+      <a href="accessibility.html" class="btn-secondary">See what can help →</a>
+    </div>
+  </div>
+</main>
+
+<footer class="wrap site-footer">
+  <span>HEAR — a web-based accessibility platform for everyday communication.</span>
+  <span>Not a medical device. Does not diagnose hearing loss.</span>
+</footer>
+
+<script>
+const scenarios = {
+  classroom: {
+    title: 'Classroom',
+    instructions: 'Press play to hear a muffled lesson with classroom chatter layered underneath.',
+    sentence: 'Today we are going to discuss the nervous system and how signals travel through the body.'
+  },
+  restaurant: {
+    title: 'Restaurant',
+    instructions: 'Press play to hear a conversation over clattering dishes and nearby chatter.',
+    sentence: 'Could you pass the menu, I think I want the soup and a salad tonight.'
+  },
+  group: {
+    title: 'Group conversation',
+    instructions: 'Press play to hear overlapping voices moving through a fast conversation.',
+    sentence: 'Wait, so are we meeting Friday or Saturday, and who is bringing the food?'
+  }
+};
+
+let audioCtx;
+function getCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+function playNoise(duration) {
+  const ctx = getCtx();
+  const bufferSize = ctx.sampleRate * duration;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.22;
+  const src = ctx.createBufferSource();
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = 1800;
+  src.buffer = buffer;
+  src.connect(filter);
+  filter.connect(ctx.destination);
+  src.start();
+  return src;
+}
+function speakMuffled(text) {
+  return new Promise((resolve) => {
+    if (!window.speechSynthesis) { resolve(); return; }
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.rate = 1.05;
+    utter.pitch = 0.9;
+    utter.volume = 0.75;
+    utter.onend = resolve;
+    utter.onerror = resolve;
+    window.speechSynthesis.speak(utter);
+  });
+}
+
+const simPanel = document.getElementById('simPanel');
+const simLabel = document.getElementById('simLabel');
+const simTitle = document.getElementById('simTitle');
+const simInstructions = document.getElementById('simInstructions');
+const simPlay = document.getElementById('simPlay');
+const simQuestion = document.getElementById('simQuestion');
+const simResult = document.getElementById('simResult');
+
+document.getElementById('scenarioGrid').addEventListener('click', (e) => {
+  const card = e.target.closest('.scenario-card');
+  if (!card) return;
+  const s = scenarios[card.dataset.scenario];
+  simLabel.textContent = 'Simulation';
+  simTitle.textContent = s.title;
+  simInstructions.textContent = s.instructions;
+  simQuestion.style.display = 'none';
+  simResult.style.display = 'none';
+  simPanel.style.display = 'block';
+  simPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  simPlay.onclick = async () => {
+    simPlay.classList.add('playing');
+    simPlay.disabled = true;
+    const noise = playNoise(4);
+    await speakMuffled(s.sentence);
+    setTimeout(() => { try { noise.stop(); } catch (e) {} }, 300);
+    simPlay.classList.remove('playing');
+    simQuestion.style.display = 'block';
+  };
+});
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('#simQuestion .choice-btn');
+  if (!btn) return;
+  simQuestion.style.display = 'none';
+  simResult.style.display = 'block';
+});
+</script>
+</body>
+</html>
